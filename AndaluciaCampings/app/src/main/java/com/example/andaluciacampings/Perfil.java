@@ -106,11 +106,11 @@ public class Perfil extends AppCompatActivity {
         startActivity(intento);
     }
 
-   /* public void Ubicacion() {
+   public void Ubicacion() {
         Intent intento = new Intent(this, MapsActivity.class);
         intento.putExtra("usuario", username);
         startActivity(intento);
-    }*/
+    }
 
     public void Logout(){
         boton_logout.setOnClickListener(
@@ -142,7 +142,7 @@ public class Perfil extends AppCompatActivity {
         bottomNav.postDelayed(() -> {
             int itemId = item.getItemId();
             if (itemId == R.id.map) {
-                //Ubicacion();
+                Ubicacion();
             } else if (itemId == R.id.perfil) {
                 Perfil();
             } else if (itemId == R.id.rank) {
