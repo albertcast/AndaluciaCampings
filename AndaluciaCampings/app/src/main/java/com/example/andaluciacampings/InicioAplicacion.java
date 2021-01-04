@@ -42,6 +42,12 @@ public class InicioAplicacion extends AppCompatActivity {
         bottomNav.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
     }
 
+    public void Home(){
+        Intent intento = new Intent(InicioAplicacion.this, InicioAplicacion.class);
+        intento.putExtra("usuario",username);
+        startActivity(intento);
+    }
+
     public void Perfil(){
         Intent intento = new Intent(InicioAplicacion.this, Perfil.class);
         intento.putExtra("usuario", username);
@@ -85,7 +91,9 @@ public class InicioAplicacion extends AppCompatActivity {
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         bottomNav.postDelayed(() -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.map) {
+            if(itemId == R.id.inicioAplicacion){
+                Home();
+            } else if (itemId == R.id.map) {
                 Ubicacion();
             } else if (itemId == R.id.perfil) {
                 Perfil();

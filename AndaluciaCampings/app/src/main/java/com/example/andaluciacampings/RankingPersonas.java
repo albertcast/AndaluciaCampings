@@ -50,7 +50,7 @@ public class RankingPersonas extends AppCompatActivity {
         bottomNav.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
 
         bottomNav.getMenu().getItem(0).setChecked(false);
-        bottomNav.getMenu().getItem(2).setChecked(true);
+        bottomNav.getMenu().getItem(3).setChecked(true);
 
         textView_nombre.setText(R.string.textView_nombre_string);
         button_siguiente.setText(R.string.boton_siguiente);
@@ -145,6 +145,12 @@ public class RankingPersonas extends AppCompatActivity {
         );
     }
 
+    public void Home(){
+        Intent intento = new Intent(RankingPersonas.this, InicioAplicacion.class);
+        intento.putExtra("usuario",username);
+        startActivity(intento);
+    }
+
     public void Perfil(){
         Intent intento = new Intent(RankingPersonas.this, Perfil.class);
         intento.putExtra("usuario", username);
@@ -173,7 +179,9 @@ public class RankingPersonas extends AppCompatActivity {
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         bottomNav.postDelayed(() -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.map) {
+            if(itemId == R.id.inicioAplicacion){
+                Home();
+            } else if (itemId == R.id.map) {
                 Ubicacion();
             } else if (itemId == R.id.perfil) {
                 Perfil();
