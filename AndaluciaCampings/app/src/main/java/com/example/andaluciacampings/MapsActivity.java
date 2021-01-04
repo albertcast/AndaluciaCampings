@@ -5,11 +5,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,6 +21,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -36,6 +39,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             , campingPinarSanJosé, campingLasLomas, campingPlayaAguadulce, CampingAlmanat, campingValdevaqueros, campingMarAzulBalerma
             , campingLaAldea, CampingTarifa, CampingLuz;
     private LatLng[] campings;
+    private String username;
+
+    private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +52,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        bottomNav = (BottomNavigationView) findViewById(R.id.bottomNavigation);
+        bottomNav.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
+
+
+        username = getIntent().getStringExtra("usuario");
         ActivityCompat.requestPermissions(this, new String [] {Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         ActivityCompat.requestPermissions(this, new String [] {Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
 
@@ -138,7 +149,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onLocationChanged(@NonNull Location location) {
                 try {
                     Location target = new Location("target");
-
+                    
                     latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     if(marker != null){
                         marker.remove();
@@ -166,5 +177,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (SecurityException e){
             e.printStackTrace();
         }
+    }
+    public void Perfil(){
+        Intent intento = new Intent(MapsActivity.this, Perfil.class);
+        intento.putExtra("usuario", username);
+        startActivity(intento);
+    }
+
+    public void Ubicacion() {
+        Intent intento = new Intent(this, MapsActivity.class);
+        intento.putExtra("usuario", username);
+        startActivity(intento);
+    }
+
+    public void Ranking(){
+        Intent intento = new Intent(MapsActivity.this, RankingPersonas.class);
+        intento.putExtra("usuario",username);
+        startActivity(intento);
+    }
+
+    /*public void Campings(){
+        Intent intento = new Intent(RankingPersonas.this, ListaCampings.class);
+        intento.putExtra("usuario", username);
+        startActivity(intento);
+    }*/
+
+
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        bottomNav.postDelayed(() -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.map) {
+                Ubicacion();
+            } else if (itemId == R.id.perfil) {
+                Perfil();
+            } else if (itemId == R.id.rank) {
+                Ranking();
+            } else if (itemId == R.id.listaCampings){
+                //Campings();
+            }
+            finish();
+        }, 300);
+        return true;
     }
 }
