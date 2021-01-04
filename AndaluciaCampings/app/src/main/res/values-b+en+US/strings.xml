@@ -28,5 +28,8 @@
     <string name="Nombre_de_usuario_ya_está_en_uso_string">Username is already in use</string>
     <string name="Las_contraseñas_introducidas_no_coinciden_string">Passwords do not match</string>
     <string name="Alcanzado_nuevo_camping_string">New camping reached</string>
+    <string name="Caracteres_especiales_string">Invalid text entered</string>
+    <string name="Que_caraceres_especiales_string">Some text fields contain special characters that are not allowed </string>
+
 
 </resources>

@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +21,23 @@ public class Login extends AppCompatActivity {
     EditText editText_usuario, editText_password;
     Button boton_login, boton_registro;
     TextView textView_usuario, textView_password;
+
+    private boolean valido = true;
+    private String blockCharacterSet = "[]{}(),;.:-_~#^|$%&*!";
+    private InputFilter filter = new InputFilter() {
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            if (source != null && blockCharacterSet.contains(("" + source))) {
+                valido = false;
+            } else {
+                valido = true;
+            }
+            return null;
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,24 +80,31 @@ public class Login extends AppCompatActivity {
                 new View.OnClickListener(){
                     @Override
                     public void onClick(View v){
-                        if (!TextUtils.isEmpty(editText_usuario.getText().toString()) && !TextUtils.isEmpty(editText_password.getText().toString())){
-                            Cursor res = myDb.getUsername(editText_usuario.getText().toString());
-                            String password;
-                            if(res.moveToNext()) {
-                                password = res.getString(2);
-                                if(editText_password.getText().toString().equalsIgnoreCase(password)){
-                                    Intent intento = new Intent(Login.this, InicioAplicacion.class);
-                                    UsuarioAplicacion.get().setNombre(editText_usuario.getText().toString());
-                                    startActivity(intento);
+                        if(valido) {
+                            if (!TextUtils.isEmpty(editText_usuario.getText().toString()) && !TextUtils.isEmpty(editText_password.getText().toString())) {
+                                Cursor res = myDb.getUsername(editText_usuario.getText().toString());
+                                String password;
+                                if (res.moveToNext()) {
+                                    password = res.getString(2);
+                                    if (editText_password.getText().toString().equalsIgnoreCase(password)) {
+                                        Intent intento = new Intent(Login.this, InicioAplicacion.class);
+                                        UsuarioAplicacion.get().setNombre(editText_usuario.getText().toString());
+                                        startActivity(intento);
+                                    } else {
+                                        Toast.makeText(Login.this, R.string.Usuario_o_contraseña_inválidos_string, Toast.LENGTH_LONG).show();
+                                    }
                                 } else {
-                                    Toast.makeText(Login.this,R.string.Usuario_o_contraseña_inválidos_string, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(Login.this, R.string.Usuario_o_contraseña_inválidos_string, Toast.LENGTH_LONG).show();
                                 }
                             } else {
-                                Toast.makeText(Login.this,R.string.Usuario_o_contraseña_inválidos_string, Toast.LENGTH_LONG).show();
+                                Toast.makeText(Login.this, R.string.Algunos_campos_están_vacíos_string, Toast.LENGTH_LONG).show();
                             }
                         } else {
-                            Toast.makeText(Login.this,R.string.Algunos_campos_están_vacíos_string, Toast.LENGTH_LONG).show();
-                        }
+                            AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
+                            builder.setCancelable(true);
+                            builder.setTitle(R.string.Caracteres_especiales_string);
+                            builder.setMessage(R.string.Que_caraceres_especiales_string);
+                            builder.show();                        }
                     }
                 }
         );

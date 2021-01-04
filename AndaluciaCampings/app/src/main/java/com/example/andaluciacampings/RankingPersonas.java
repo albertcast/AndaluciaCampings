@@ -1,11 +1,14 @@
 package com.example.andaluciacampings;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -29,6 +33,23 @@ public class RankingPersonas extends AppCompatActivity {
     DatabaseHelper myDb;
     int offset = 0, limit = 6, offset_buscar = 0;
     BottomNavigationView bottomNav;
+    private boolean valido = true;
+    private String blockCharacterSet = "[]{}(),;.:-_~#^|$%&*!";
+
+    private InputFilter filter = new InputFilter() {
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            if (source != null && blockCharacterSet.contains(("" + source))) {
+                valido = false;
+            } else {
+                valido = true;
+            }
+            return null;
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +75,8 @@ public class RankingPersonas extends AppCompatActivity {
         button_siguiente.setText(R.string.boton_siguiente);
         button_anterior.setText(R.string.boton_anterior);
         button_buscar.setText(R.string.boton_buscar);
+
+        editText_nombre.setFilters(new InputFilter[]{filter});
 
         myDb = new DatabaseHelper(this);
 
@@ -132,12 +155,19 @@ public class RankingPersonas extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(!TextUtils.isEmpty(editText_nombre.getText().toString())){
-                            Cursor res = myDb.getUsername(editText_nombre.getText().toString());
-                            if (res.moveToNext()){
-                                Adaptar(res.getString(3));
+                        if(valido){
+                            if(!TextUtils.isEmpty(editText_nombre.getText().toString())){
+                                Cursor res = myDb.getUsername(editText_nombre.getText().toString());
+                                if (res.moveToNext()){
+                                    Adaptar(res.getString(3));
+                                }
                             }
-                        }
+                        } else {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(RankingPersonas.this);
+                            builder.setCancelable(true);
+                            builder.setTitle(R.string.Caracteres_especiales_string);
+                            builder.setMessage(R.string.Que_caraceres_especiales_string);
+                            builder.show();                          }
                     }
                 }
         );

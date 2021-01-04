@@ -28,4 +28,7 @@
     <string name="Nombre_de_usuario_ya_está_en_uso_string">Nombre de usuario ya está en uso</string>
     <string name="Las_contraseñas_introducidas_no_coinciden_string">Las contraseñas introducidas no coinciden</string>
     <string name="Alcanzado_nuevo_camping_string">Alcanzado nuevo camping</string>
+    <string name="Caracteres_especiales_string">Texto introducido no válido</string>
+    <string name="Que_caraceres_especiales_string">Algunos campos contienen carácteres especiales no permitidos </string>
+
 </resources>

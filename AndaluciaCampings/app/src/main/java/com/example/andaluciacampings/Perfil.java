@@ -1,11 +1,14 @@
 package com.example.andaluciacampings;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +28,26 @@ public class Perfil extends AppCompatActivity {
     String username;
     ProgressBar progressBar_experiencia;
     BottomNavigationView bottomNav;
+    private boolean valido = true;
+
+    private String blockCharacterSet = "[]{}(),;.:-_~#^|$%&*!";
+
+    private InputFilter filter = new InputFilter() {
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            if (source != null && blockCharacterSet.contains(("" + source))) {
+                valido = false;
+            } else {
+                valido = true;
+            }
+            return null;
+        }
+    };
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +75,10 @@ public class Perfil extends AppCompatActivity {
         textView_apellidos.setText(R.string.textView_apellido_string);
         boton_logout.setText(R.string.boton_logout);
         boton_guardar.setText(R.string.boton_guardar);
+        InputFilter[] inputFilters = new InputFilter[]{filter};
 
+        editText_nombre.setFilters(inputFilters);
+        editText_apellidos.setFilters(inputFilters);
 
         progressBar_experiencia.setMax(100);
 
@@ -85,12 +111,19 @@ public class Perfil extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Cursor res = myDb.getUsername(username);
-                        if (res.moveToNext()){
-                            myDb.updateData(res.getString(0), editText_nombre.getText().toString(), editText_apellidos.getText().toString());
-                            Toast.makeText(Perfil.this, R.string.Los_cambios_han_sido_guardados_string, Toast.LENGTH_LONG).show();
+                        if (valido) {
+                            if (res.moveToNext()) {
+                                myDb.updateData(res.getString(0), editText_nombre.getText().toString(), editText_apellidos.getText().toString());
+                                Toast.makeText(Perfil.this, R.string.Los_cambios_han_sido_guardados_string, Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(Perfil.this, R.string.No_se_han_podido_guardar_los_cambios_string, Toast.LENGTH_LONG).show();
+                            }
                         } else {
-                            Toast.makeText(Perfil.this, R.string.No_se_han_podido_guardar_los_cambios_string, Toast.LENGTH_LONG).show();
-                        }
+                            AlertDialog.Builder builder = new AlertDialog.Builder(Perfil.this);
+                            builder.setCancelable(true);
+                            builder.setTitle(R.string.Caracteres_especiales_string);
+                            builder.setMessage(R.string.Que_caraceres_especiales_string);
+                            builder.show();                          }
                     }
                 }
         );
