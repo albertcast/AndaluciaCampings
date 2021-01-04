@@ -39,7 +39,7 @@ public class ListaCampings extends AppCompatActivity {
         bottomNav.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
 
         bottomNav.getMenu().getItem(0).setChecked(false);
-        bottomNav.getMenu().getItem(3).setChecked(true);
+        bottomNav.getMenu().getItem(4).setChecked(true);
     }
 
     private void prepareTheList(){
@@ -50,6 +50,12 @@ public class ListaCampings extends AppCompatActivity {
             campingList.add(camping);
             count++;
         }
+    }
+
+    public void Home(){
+        Intent intento = new Intent(ListaCampings.this, InicioAplicacion.class);
+        intento.putExtra("usuario",username);
+        startActivity(intento);
     }
 
     public void Perfil(){
@@ -80,7 +86,9 @@ public class ListaCampings extends AppCompatActivity {
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         bottomNav.postDelayed(() -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.map) {
+            if(itemId == R.id.inicioAplicacion){
+                Home();
+            } else if (itemId == R.id.map) {
                 Ubicacion();
             } else if (itemId == R.id.perfil) {
                 Perfil();

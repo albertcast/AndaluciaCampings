@@ -73,6 +73,12 @@ public class InicioAplicacion extends AppCompatActivity implements SensorEventLi
         magnetometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
     }
 
+    public void Home(){
+        Intent intento = new Intent(InicioAplicacion.this, InicioAplicacion.class);
+        intento.putExtra("usuario",username);
+        startActivity(intento);
+    }
+
     public void Perfil(){
         Intent intento = new Intent(InicioAplicacion.this, Perfil.class);
         intento.putExtra("usuario", username);
@@ -106,24 +112,26 @@ public class InicioAplicacion extends AppCompatActivity implements SensorEventLi
     }
 
 
-    /*public void Campings(){
+    public void Campings(){
         Intent intento = new Intent(InicioAplicacion.this, ListaCampings.class);
         intento.putExtra("usuario", username);
         startActivity(intento);
-    }*/
+    }
 
 
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         bottomNav.postDelayed(() -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.map) {
+            if(itemId == R.id.inicioAplicacion){
+                Home();
+            } else if (itemId == R.id.map) {
                 Ubicacion();
             } else if (itemId == R.id.perfil) {
                 Perfil();
             } else if (itemId == R.id.rank) {
                 Ranking();
             } else if (itemId == R.id.listaCampings){
-                //Campings();
+                Campings();
             }
             finish();
         }, 300);

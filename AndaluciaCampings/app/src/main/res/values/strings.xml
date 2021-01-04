@@ -13,6 +13,7 @@
     <string name="boton_siguiente">Siguiente</string>
     <string name="boton_anterior">Anterior</string>
     <string name="boton_buscar">Buscar</string>
+    <string name="boton_home">Inicio</string>
     <string name="boton_rank">Clasificación</string>
     <string name="textView_repetir_password_string">Repetir contraseña</string>
     <string name="textView_nombre_string">Nombre</string>

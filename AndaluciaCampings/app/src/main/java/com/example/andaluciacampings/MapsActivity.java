@@ -62,7 +62,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ActivityCompat.requestPermissions(this, new String [] {Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         ActivityCompat.requestPermissions(this, new String [] {Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
 
-
+        bottomNav.getMenu().getItem(0).setChecked(false);
+        bottomNav.getMenu().getItem(1).setChecked(true);
 
 
     }
@@ -186,6 +187,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             e.printStackTrace();
         }
     }
+    public void Home(){
+        Intent intento = new Intent(MapsActivity.this, InicioAplicacion.class);
+        intento.putExtra("usuario",username);
+        startActivity(intento);
+    }
+
     public void Perfil(){
         Intent intento = new Intent(MapsActivity.this, Perfil.class);
         intento.putExtra("usuario", username);
@@ -204,24 +211,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startActivity(intento);
     }
 
-    /*public void Campings(){
-        Intent intento = new Intent(RankingPersonas.this, ListaCampings.class);
+    public void Campings(){
+        Intent intento = new Intent(MapsActivity.this, ListaCampings.class);
         intento.putExtra("usuario", username);
         startActivity(intento);
-    }*/
+    }
 
 
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         bottomNav.postDelayed(() -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.map) {
+            if (itemId == R.id.inicioAplicacion){
+                Home();
+            } else if (itemId == R.id.map) {
                 Ubicacion();
             } else if (itemId == R.id.perfil) {
                 Perfil();
             } else if (itemId == R.id.rank) {
                 Ranking();
             } else if (itemId == R.id.listaCampings){
-                //Campings();
+                Campings();
             }
             finish();
         }, 300);
