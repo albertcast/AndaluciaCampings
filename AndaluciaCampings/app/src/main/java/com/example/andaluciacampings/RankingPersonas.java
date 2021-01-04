@@ -28,7 +28,6 @@ public class RankingPersonas extends AppCompatActivity {
     Button button_anterior, button_siguiente, button_buscar;
     DatabaseHelper myDb;
     int offset = 0, limit = 6, offset_buscar = 0;
-    String username;
     BottomNavigationView bottomNav;
 
     @Override
@@ -44,7 +43,6 @@ public class RankingPersonas extends AppCompatActivity {
         button_anterior = (Button) findViewById(R.id.button_anterior_ranking);
         button_siguiente = (Button) findViewById(R.id.button_siguiente_ranking);
         button_buscar = (Button) findViewById(R.id.button_buscar_ranking);
-        username = getIntent().getStringExtra("usuario");
 
         bottomNav = (BottomNavigationView) findViewById(R.id.bottomNavigation);
         bottomNav.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
@@ -147,31 +145,26 @@ public class RankingPersonas extends AppCompatActivity {
 
     public void Home(){
         Intent intento = new Intent(RankingPersonas.this, InicioAplicacion.class);
-        intento.putExtra("usuario",username);
         startActivity(intento);
     }
 
     public void Perfil(){
         Intent intento = new Intent(RankingPersonas.this, Perfil.class);
-        intento.putExtra("usuario", username);
         startActivity(intento);
     }
 
    public void Ubicacion() {
         Intent intento = new Intent(this, MapsActivity.class);
-        intento.putExtra("usuario", username);
         startActivity(intento);
     }
 
     public void Ranking(){
         Intent intento = new Intent(RankingPersonas.this, RankingPersonas.class);
-        intento.putExtra("usuario",username);
         startActivity(intento);
     }
 
     public void Campings(){
         Intent intento = new Intent(RankingPersonas.this, ListaCampings.class);
-        intento.putExtra("usuario", username);
         startActivity(intento);
     }
 

@@ -68,7 +68,7 @@ public class Login extends AppCompatActivity {
                                 password = res.getString(2);
                                 if(editText_password.getText().toString().equalsIgnoreCase(password)){
                                     Intent intento = new Intent(Login.this, InicioAplicacion.class);
-                                    intento.putExtra("usuario", editText_usuario.getText().toString());
+                                    UsuarioAplicacion.get().setNombre(editText_usuario.getText().toString());
                                     startActivity(intento);
                                 } else {
                                     Toast.makeText(Login.this,R.string.Usuario_o_contraseña_inválidos_string, Toast.LENGTH_LONG).show();

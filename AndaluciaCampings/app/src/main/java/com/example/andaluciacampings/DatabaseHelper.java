@@ -22,7 +22,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_7 = "EXPERIENCIA";
     public static final String COL_8 = "COOLDOWN";
 
-    private boolean onCooldown = false;
     private int cooldownTime = 7200000; //Cooldown 2 horas
 
     public DatabaseHelper(Context context){

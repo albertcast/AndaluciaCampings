@@ -17,7 +17,6 @@ import java.util.List;
 public class ListaCampings extends AppCompatActivity {
 
     BottomNavigationView bottomNav;
-    String username;
     private String[] names = {"Camping Cabopino", "Campings Los Escullos", "Camping Giralda", "Campings Canos del Meca", "Camping La Rosaleda",
             "Camping San Jose", "Camping Almayate Costa", "Camping Las Lomas", "Camping Playa Agua Dulce", "Camping Almanat", "Camping Valdevaqueros",
             "Camping Balerma", "Camping La Aldea", "Camping Tarifa", "Camping Luz"};
@@ -34,7 +33,6 @@ public class ListaCampings extends AppCompatActivity {
         prepareTheList();
         RecyclerAdapter adapter = new RecyclerAdapter(campingList);
         recyclerView.setAdapter(adapter);
-        username = getIntent().getStringExtra("usuario");
         bottomNav = (BottomNavigationView) findViewById(R.id.bottomNavigation);
         bottomNav.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
 
@@ -54,31 +52,26 @@ public class ListaCampings extends AppCompatActivity {
 
     public void Home(){
         Intent intento = new Intent(ListaCampings.this, InicioAplicacion.class);
-        intento.putExtra("usuario",username);
         startActivity(intento);
     }
 
     public void Perfil(){
         Intent intento = new Intent(ListaCampings.this, Perfil.class);
-        intento.putExtra("usuario", username);
         startActivity(intento);
     }
 
     public void Ubicacion() {
         Intent intento = new Intent(this, MapsActivity.class);
-        intento.putExtra("usuario", username);
         startActivity(intento);
     }
 
     public void Ranking(){
         Intent intento = new Intent(ListaCampings.this, RankingPersonas.class);
-        intento.putExtra("usuario",username);
         startActivity(intento);
     }
 
     public void Campings(){
         Intent intento = new Intent(ListaCampings.this, ListaCampings.class);
-        intento.putExtra("usuario", username);
         startActivity(intento);
     }
 

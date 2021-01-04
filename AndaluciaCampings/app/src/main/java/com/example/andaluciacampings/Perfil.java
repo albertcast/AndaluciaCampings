@@ -30,49 +30,45 @@ public class Perfil extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
-        if (getIntent().hasExtra("usuario")){
-            username = getIntent().getStringExtra("usuario");
-            editText_nombre = (EditText) findViewById(R.id.editText_nombre_perfil);
-            editText_apellidos = (EditText) findViewById(R.id.editText_apellidos_perfil);
-            textView_nombre = (TextView) findViewById(R.id.textView_nombre_perfil);
-            textView_apellidos = (TextView) findViewById(R.id.textView_apellido_perfil);
-            textView_experiencia = (TextView) findViewById(R.id.textView_experiencia_perfil);
-            textView_nivel = (TextView) findViewById(R.id.textView_nivel_numero_perfil);
-            boton_logout = (Button) findViewById(R.id.button_logout_perfil);
-            boton_guardar = (Button) findViewById(R.id.button_guardar_perfil);
-            progressBar_experiencia = (ProgressBar) findViewById(R.id.progressBar_experiencia_perfil);
-            progressBar_experiencia.setIndeterminate(false);
+        username = UsuarioAplicacion.get().getNombre();
+        editText_nombre = (EditText) findViewById(R.id.editText_nombre_perfil);
+        editText_apellidos = (EditText) findViewById(R.id.editText_apellidos_perfil);
+        textView_nombre = (TextView) findViewById(R.id.textView_nombre_perfil);
+        textView_apellidos = (TextView) findViewById(R.id.textView_apellido_perfil);
+        textView_experiencia = (TextView) findViewById(R.id.textView_experiencia_perfil);
+        textView_nivel = (TextView) findViewById(R.id.textView_nivel_numero_perfil);
+        boton_logout = (Button) findViewById(R.id.button_logout_perfil);
+        boton_guardar = (Button) findViewById(R.id.button_guardar_perfil);
+        progressBar_experiencia = (ProgressBar) findViewById(R.id.progressBar_experiencia_perfil);
+        progressBar_experiencia.setIndeterminate(false);
 
-            bottomNav = (BottomNavigationView) findViewById(R.id.bottomNavigation);
-            bottomNav.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
+        bottomNav = (BottomNavigationView) findViewById(R.id.bottomNavigation);
+        bottomNav.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
 
-            bottomNav.getMenu().getItem(0).setChecked(false);
-            bottomNav.getMenu().getItem(2).setChecked(true);
+        bottomNav.getMenu().getItem(0).setChecked(false);
+        bottomNav.getMenu().getItem(2).setChecked(true);
 
-            textView_nombre.setText(R.string.textView_nombre_string);
-            textView_apellidos.setText(R.string.textView_apellido_string);
-            boton_logout.setText(R.string.boton_logout);
-            boton_guardar.setText(R.string.boton_guardar);
-
-
-            progressBar_experiencia.setMax(100);
+        textView_nombre.setText(R.string.textView_nombre_string);
+        textView_apellidos.setText(R.string.textView_apellido_string);
+        boton_logout.setText(R.string.boton_logout);
+        boton_guardar.setText(R.string.boton_guardar);
 
 
-            myDb = new DatabaseHelper(this);
+        progressBar_experiencia.setMax(100);
 
-            Cursor res = myDb.getUsername(username);
-            if (res.moveToNext()){
-                editText_nombre.setText(res.getString(3));
-                editText_apellidos.setText(res.getString(4));
-                textView_nivel.setText(Integer.toString(res.getInt(5)));
-                textView_experiencia.setText(Integer.toString(res.getInt(6))+" / 100");
-                progressBar_experiencia.setProgress(res.getInt(6));
-            }
 
-        } else {
-            Intent intento = new Intent(Perfil.this, Login.class);
-            startActivity(intento);
+        myDb = new DatabaseHelper(this);
+
+        Cursor res = myDb.getUsername(username);
+        if (res.moveToNext()){
+            editText_nombre.setText(res.getString(3));
+            editText_apellidos.setText(res.getString(4));
+            textView_nivel.setText(Integer.toString(res.getInt(5)));
+            textView_experiencia.setText(Integer.toString(res.getInt(6))+" / 100");
+            progressBar_experiencia.setProgress(res.getInt(6));
         }
+
+
 
         Guardar();
         Logout();
@@ -102,19 +98,16 @@ public class Perfil extends AppCompatActivity {
 
     public void Home(){
         Intent intento = new Intent(Perfil.this, InicioAplicacion.class);
-        intento.putExtra("usuario",username);
         startActivity(intento);
     }
 
     public void Perfil(){
         Intent intento = new Intent(Perfil.this, Perfil.class);
-        intento.putExtra("usuario", username);
         startActivity(intento);
     }
 
    public void Ubicacion() {
         Intent intento = new Intent(this, MapsActivity.class);
-        intento.putExtra("usuario", username);
         startActivity(intento);
     }
 
@@ -132,14 +125,12 @@ public class Perfil extends AppCompatActivity {
 
     public void Ranking(){
         Intent intento = new Intent(Perfil.this, RankingPersonas.class);
-        intento.putExtra("usuario",username);
         startActivity(intento);
     }
 
 
     public void Campings(){
         Intent intento = new Intent(Perfil.this, ListaCampings.class);
-        intento.putExtra("usuario", username);
         startActivity(intento);
     }
 

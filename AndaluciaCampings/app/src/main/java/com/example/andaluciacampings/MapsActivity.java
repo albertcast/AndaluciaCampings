@@ -40,7 +40,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             , campingPinarSanJosé, campingLasLomas, campingPlayaAguadulce, CampingAlmanat, campingValdevaqueros, campingMarAzulBalerma
             , campingLaAldea, CampingTarifa, CampingLuz;
     private LatLng[] campings;
-    private String username;
 
     private BottomNavigationView bottomNav;
 
@@ -58,7 +57,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         bottomNav = (BottomNavigationView) findViewById(R.id.bottomNavigation);
         bottomNav.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
         myDb = new DatabaseHelper(this);
-        username = getIntent().getStringExtra("usuario");
         ActivityCompat.requestPermissions(this, new String [] {Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         ActivityCompat.requestPermissions(this, new String [] {Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
 
@@ -167,7 +165,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         target.setLatitude(point.latitude);
                         target.setLongitude(point.longitude);
                         if(location.distanceTo(target) < 100) {
-                            if(myDb.updateExperiencia(username, 10)) {
+                            if(myDb.updateExperiencia(UsuarioAplicacion.get().getNombre(), 10)) {
                                 Toast.makeText(MapsActivity.this, R.string.Alcanzado_nuevo_camping_string, Toast.LENGTH_LONG).show();
                                 System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
                             }
@@ -189,31 +187,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
     public void Home(){
         Intent intento = new Intent(MapsActivity.this, InicioAplicacion.class);
-        intento.putExtra("usuario",username);
         startActivity(intento);
     }
 
     public void Perfil(){
         Intent intento = new Intent(MapsActivity.this, Perfil.class);
-        intento.putExtra("usuario", username);
         startActivity(intento);
     }
 
     public void Ubicacion() {
         Intent intento = new Intent(this, MapsActivity.class);
-        intento.putExtra("usuario", username);
         startActivity(intento);
     }
 
     public void Ranking(){
         Intent intento = new Intent(MapsActivity.this, RankingPersonas.class);
-        intento.putExtra("usuario",username);
         startActivity(intento);
     }
 
     public void Campings(){
         Intent intento = new Intent(MapsActivity.this, ListaCampings.class);
-        intento.putExtra("usuario", username);
         startActivity(intento);
     }
 

@@ -24,7 +24,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class InicioAplicacion extends AppCompatActivity implements SensorEventListener{
 
     Button boton_ubicacion, boton_perfil, boton_logout, boton_ranking;
-    String username;
     BottomNavigationView bottomNav;
 
     private boolean locationPermission = false;
@@ -56,10 +55,8 @@ public class InicioAplicacion extends AppCompatActivity implements SensorEventLi
             Toast.makeText(this, getIntent().getStringExtra("perfil_guardar"),Toast.LENGTH_LONG).show();
         }
 
-        username = getIntent().getStringExtra("usuario");
 
-        boton_ubicacion.setText(R.string.boton_location);
-        boton_perfil.setText(R.string.boton_perfil);
+
 
         bottomNav = (BottomNavigationView) findViewById(R.id.bottomNavigation);
         bottomNav.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
@@ -75,19 +72,16 @@ public class InicioAplicacion extends AppCompatActivity implements SensorEventLi
 
     public void Home(){
         Intent intento = new Intent(InicioAplicacion.this, InicioAplicacion.class);
-        intento.putExtra("usuario",username);
         startActivity(intento);
     }
 
     public void Perfil(){
         Intent intento = new Intent(InicioAplicacion.this, Perfil.class);
-        intento.putExtra("usuario", username);
         startActivity(intento);
     }
 
     public void Ubicacion() {
         Intent intento = new Intent(this, MapsActivity.class);
-        intento.putExtra("usuario", username);
         startActivity(intento);
     }
 
@@ -107,14 +101,12 @@ public class InicioAplicacion extends AppCompatActivity implements SensorEventLi
 
     public void Ranking(){
         Intent intento = new Intent(InicioAplicacion.this, RankingPersonas.class);
-        intento.putExtra("usuario",username);
         startActivity(intento);
     }
 
 
     public void Campings(){
         Intent intento = new Intent(InicioAplicacion.this, ListaCampings.class);
-        intento.putExtra("usuario", username);
         startActivity(intento);
     }
 
