@@ -131,8 +131,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         campingLaAldea = new LatLng(37.14143113234951, -6.490598459957499);
         mMap.addMarker(new MarkerOptions().position(campingLaAldea).title("Camping La Aldea")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-
-        CampingTarifa = new LatLng(36.05488418183475, -5.64954075258505);
+        CampingTarifa = new LatLng(36.05472585341114, -5.64981372321939);
         mMap.addMarker(new MarkerOptions().position(CampingTarifa).title("Camping Tarifa")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 

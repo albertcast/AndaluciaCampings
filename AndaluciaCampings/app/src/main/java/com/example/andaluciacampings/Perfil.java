@@ -37,7 +37,7 @@ public class Perfil extends AppCompatActivity {
             textView_nombre = (TextView) findViewById(R.id.textView_nombre_perfil);
             textView_apellidos = (TextView) findViewById(R.id.textView_apellido_perfil);
             textView_experiencia = (TextView) findViewById(R.id.textView_experiencia_perfil);
-            textView_nivel = (TextView) findViewById(R.id.textView_nivel_perfil);
+            textView_nivel = (TextView) findViewById(R.id.textView_nivel_numero_perfil);
             boton_logout = (Button) findViewById(R.id.button_logout_perfil);
             boton_guardar = (Button) findViewById(R.id.button_guardar_perfil);
             progressBar_experiencia = (ProgressBar) findViewById(R.id.progressBar_experiencia_perfil);

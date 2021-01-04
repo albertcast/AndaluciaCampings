@@ -26,14 +26,14 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/textView_nivel_perfil"
+        app:layout_constraintBottom_toTopOf="@+id/textView_nivel_numero_perfil"
         app:layout_constraintEnd_toEndOf="@+id/editText_nombre_perfil"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/editText_nombre_perfil"
         app:layout_constraintTop_toBottomOf="@+id/editText_nombre_perfil" />
 
     <TextView
-        android:id="@+id/textView_nivel_perfil"
+        android:id="@+id/textView_nivel_numero_perfil"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -104,7 +104,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_nivel_perfil"
+        app:layout_constraintTop_toBottomOf="@+id/textView_nivel_numero_perfil"
         app:layout_constraintVertical_bias="0.089" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -115,5 +115,29 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_menu" />
+
+    <TextView
+        android:id="@+id/textView_nivel_string_perfil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textView_nivel_string"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar_experiencia_perfil"
+        app:layout_constraintEnd_toStartOf="@+id/textView_nivel_numero_perfil"
+        app:layout_constraintHorizontal_bias="0.422"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText_apellidos_perfil"
+        app:layout_constraintVertical_bias="0.739" />
+
+    <TextView
+        android:id="@+id/textView_experiencia_string_perfil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textView_experiencia_string"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/textView_experiencia_perfil"
+        app:layout_constraintHorizontal_bias="0.401"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar_experiencia_perfil"
+        app:layout_constraintVertical_bias="0.081" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

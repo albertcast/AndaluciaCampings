@@ -23,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_8 = "COOLDOWN";
 
     private boolean onCooldown = false;
-    private int cooldownTime = 10000;
+    private int cooldownTime = 7200000; //Cooldown 2 horas
 
     public DatabaseHelper(Context context){
         super(context,DATABASE_NAME,null,1);
@@ -35,7 +35,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         Date date = new Date();
         String dateTime = dateFormat.format(date);
-        System.out.println(dateTime);
 
 
         db.execSQL("create table " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, USER TEXT, PASSWORD TEXT, NOMBRE TEXT, APELLIDO TEXT, NIVEL INTEGER, EXPERIENCIA INTEGER, COOLDOWN TEXT)");
@@ -170,20 +169,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
             try {
                 Date cd = simpleDateFormat.parse(cooldown);
-                Long millis = System.currentTimeMillis();
-                if(millis - cd.getTime() >= cooldownTime ){
+                Date ahora = new Date();
+                if(ahora.getTime() - cd.getTime() >= cooldownTime ){
                     if (experiencia + exp >= 100){
                         nivel++;
                         experiencia = experiencia + exp - 100;
                     } else {
                         experiencia += exp;
                     }
-
+                    String stringahora =  simpleDateFormat.format(ahora);
 
                     contentValues.put(COL_1, id);
                     contentValues.put(COL_6, nivel);
                     contentValues.put(COL_7, experiencia);
-                    contentValues.put(COL_8, millis);
+                    contentValues.put(COL_8, stringahora);
                     db.update(TABLE_NAME, contentValues, "ID = ?", new String[] { id });
                     return true;
                 }

@@ -17,6 +17,8 @@
     <string name="textView_repetir_password_string">Repeat password</string>
     <string name="textView_nombre_string">Name</string>
     <string name="textView_apellido_string">Surname</string>
+    <string name="textView_nivel_string">Level</string>
+    <string name="textView_experiencia_string">Experience</string>
     <string name="Usuario_creado_string">User created</string>
     <string name="Usuario_o_contraseña_inválidos_string">Invalid user or password</string>
     <string name="Algunos_campos_están_vacíos_string">Some fields are empty</string>
