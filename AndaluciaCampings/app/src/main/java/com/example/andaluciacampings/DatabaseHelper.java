@@ -6,6 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "User.db";
     public static final String TABLE_NAME = "user_table";
@@ -16,6 +20,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_5 = "APELLIDO";
     public static final String COL_6 = "NIVEL";
     public static final String COL_7 = "EXPERIENCIA";
+    public static final String COL_8 = "COOLDOWN";
+
+    private boolean onCooldown = false;
+    private int cooldownTime = 10000;
 
     public DatabaseHelper(Context context){
         super(context,DATABASE_NAME,null,1);
@@ -24,64 +32,76 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db){
 
-        String admin = "admin";
-        db.execSQL("create table " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, USER TEXT, PASSWORD TEXT, NOMBRE TEXT, APELLIDO TEXT, NIVEL INTEGER, EXPERIENCIA INTEGER)");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        Date date = new Date();
+        String dateTime = dateFormat.format(date);
+        System.out.println(dateTime);
+
+
+        db.execSQL("create table " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, USER TEXT, PASSWORD TEXT, NOMBRE TEXT, APELLIDO TEXT, NIVEL INTEGER, EXPERIENCIA INTEGER, COOLDOWN TEXT)");
         db.execSQL("INSERT INTO "+ TABLE_NAME+ " (" +
                 COL_2 + "," +
                 COL_3 + "," +
                 COL_4 + "," +
                 COL_5 + "," +
                 COL_6 + "," +
-                COL_7 + ")" +
-                " VALUES ('admin','admin','admin','admin',99,0);");
+                COL_7 + "," +
+                COL_8 + ")" +
+                " VALUES ('admin','admin','admin','admin',99,0,'"+dateTime+"');");
         db.execSQL("INSERT INTO "+ TABLE_NAME+ " (" +
                 COL_2 + "," +
                 COL_3 + "," +
                 COL_4 + "," +
                 COL_5 + "," +
                 COL_6 + "," +
-                COL_7 + ")" +
-                " VALUES ('usuario1','usuario1','usuario1','usuario1',1,0);");
+                COL_7 + "," +
+                COL_8 + ")" +
+                " VALUES ('usuario1','usuario1','usuario1','usuario1',1,0,'"+dateTime+"');");
         db.execSQL("INSERT INTO "+ TABLE_NAME+ " (" +
                 COL_2 + "," +
                 COL_3 + "," +
                 COL_4 + "," +
                 COL_5 + "," +
                 COL_6 + "," +
-                COL_7 + ")" +
-                " VALUES ('usuario2','usuario2','usuario2','usuario2',6,0);");
+                COL_7 + "," +
+                COL_8 + ")" +
+                " VALUES ('usuario2','usuario2','usuario2','usuario2',6,0,'"+dateTime+"');");
         db.execSQL("INSERT INTO "+ TABLE_NAME+ " (" +
                 COL_2 + "," +
                 COL_3 + "," +
                 COL_4 + "," +
                 COL_5 + "," +
                 COL_6 + "," +
-                COL_7 + ")" +
-                " VALUES ('usuario3','usuario3','usuario3','usuario3',4,0);");
+                COL_7 + "," +
+                COL_8 + ")" +
+                " VALUES ('usuario3','usuario3','usuario3','usuario3',4,0,'"+dateTime+"');");
         db.execSQL("INSERT INTO "+ TABLE_NAME+ " (" +
                 COL_2 + "," +
                 COL_3 + "," +
                 COL_4 + "," +
                 COL_5 + "," +
                 COL_6 + "," +
-                COL_7 + ")" +
-                " VALUES ('usuario4','usuario4','usuario4','usuario4',12,0);");
+                COL_7 + "," +
+                COL_8 + ")" +
+                " VALUES ('usuario4','usuario4','usuario4','usuario4',12,0,'"+dateTime+"');");
         db.execSQL("INSERT INTO "+ TABLE_NAME+ " (" +
                 COL_2 + "," +
                 COL_3 + "," +
                 COL_4 + "," +
                 COL_5 + "," +
                 COL_6 + "," +
-                COL_7 + ")" +
-                " VALUES ('usuario5','usuario5','usuario5','usuario5',20,0);");
+                COL_7 + "," +
+                COL_8 + ")" +
+                " VALUES ('usuario5','usuario5','usuario5','usuario5',20,0,'"+dateTime+"');");
         db.execSQL("INSERT INTO "+ TABLE_NAME+ " (" +
                 COL_2 + "," +
                 COL_3 + "," +
                 COL_4 + "," +
                 COL_5 + "," +
                 COL_6 + "," +
-                COL_7 + ")" +
-                " VALUES ('usuario6','usuario6','usuario6','usuario6',12,0);");
+                COL_7 + "," +
+                COL_8 + ")" +
+                " VALUES ('usuario6','usuario6','usuario6','usuario6',12,0,'"+dateTime+"');");
     }
 
     @Override
@@ -99,7 +119,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_5, apellido);
         contentValues.put(COL_6, 1);
         contentValues.put(COL_7, 0);
-
+        contentValues.put(COL_8, "");
         long result = db.insert(TABLE_NAME, null, contentValues);
         if (result == -1){
             return false;
@@ -140,25 +160,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         Cursor res = getUsername(user);
-        if (res.moveToNext()){
+        if (res.moveToFirst()){
             int experiencia, nivel;
-            String id;
-            id = res.getString(1);
-            nivel = res.getInt(6);
-            experiencia = res.getInt(7);
-            if (experiencia + exp >= 100){
-                nivel++;
-                experiencia = experiencia + exp - 100;
-            } else {
-                experiencia += exp;
+            String id, cooldown;
+            id = res.getString(0);
+            nivel = res.getInt(5);
+            experiencia = res.getInt(6);
+            cooldown = res.getString(7);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            try {
+                Date cd = simpleDateFormat.parse(cooldown);
+                Long millis = System.currentTimeMillis();
+                if(millis - cd.getTime() >= cooldownTime ){
+                    if (experiencia + exp >= 100){
+                        nivel++;
+                        experiencia = experiencia + exp - 100;
+                    } else {
+                        experiencia += exp;
+                    }
+                    contentValues.put(COL_1, id);
+                    contentValues.put(COL_6, nivel);
+                    contentValues.put(COL_7, experiencia);
+                    contentValues.put(COL_8, millis);
+                    db.update(TABLE_NAME, contentValues, "ID = ?", new String[] { id });
+                }
+
+            } catch (ParseException e){
+                e.printStackTrace();
             }
-            contentValues.put(COL_1, id);
-            contentValues.put(COL_6, nivel);
-            contentValues.put(COL_7, experiencia);
-            db.update(TABLE_NAME, contentValues, "ID = ?", new String[] { id });
         }
         return true;
     }
+
 
     public Integer deleteData(String id){
         SQLiteDatabase db = this.getWritableDatabase();

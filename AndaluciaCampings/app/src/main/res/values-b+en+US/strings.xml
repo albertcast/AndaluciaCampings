@@ -24,5 +24,6 @@
     <string name="Los_cambios_han_sido_guardados_string">Changes saved</string>
     <string name="Nombre_de_usuario_ya_está_en_uso_string">Username is already in use</string>
     <string name="Las_contraseñas_introducidas_no_coinciden_string">Passwords do not match</string>
+    <string name="Alcanzado_nuevo_camping_string">New camping reached</string>
 
 </resources>

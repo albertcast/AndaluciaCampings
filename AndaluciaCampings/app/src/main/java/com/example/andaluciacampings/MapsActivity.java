@@ -12,6 +12,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -40,8 +41,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             , campingLaAldea, CampingTarifa, CampingLuz;
     private LatLng[] campings;
     private String username;
+    private Boolean experienciaObtenida;
 
     private BottomNavigationView bottomNav;
+
+    private DatabaseHelper myDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +58,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         bottomNav = (BottomNavigationView) findViewById(R.id.bottomNavigation);
         bottomNav.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
-
-
+        myDb = new DatabaseHelper(this);
+        experienciaObtenida = false;
         username = getIntent().getStringExtra("usuario");
         ActivityCompat.requestPermissions(this, new String [] {Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         ActivityCompat.requestPermissions(this, new String [] {Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
@@ -149,7 +153,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onLocationChanged(@NonNull Location location) {
                 try {
                     Location target = new Location("target");
-                    
+
                     latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     if(marker != null){
                         marker.remove();
@@ -160,7 +164,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     for(LatLng point : campings) {
                         target.setLatitude(point.latitude);
                         target.setLongitude(point.longitude);
-                        if(location.distanceTo(target) < 100) {
+                        if(location.distanceTo(target) < 100 && !experienciaObtenida) {
+                            experienciaObtenida = myDb.updateExperiencia(username, 10);
+                            Toast.makeText(MapsActivity.this,R.string.Alcanzado_nuevo_camping_string,Toast.LENGTH_LONG).show();
                             System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
                         }
                     }
