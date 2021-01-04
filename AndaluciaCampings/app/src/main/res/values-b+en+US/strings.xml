@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">AndaluciaCampings</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="textView_usuario_string">Username</string>
+    <string name="textView_password_string">Password</string>
+    <string name="boton_login">Log in</string>
+    <string name="boton_logout">Log out</string>
+    <string name="boton_registro">Sign in</string>
+    <string name="boton_location">Map</string>
+    <string name="boton_volver">Return</string>
+    <string name="boton_guardar">Save changes</string>
+    <string name="boton_perfil">Profile</string>
+    <string name="boton_siguiente">Next</string>
+    <string name="boton_anterior">Previous</string>
+    <string name="boton_buscar">Search</string>
+    <string name="boton_rank">Ranking</string>
+    <string name="textView_repetir_password_string">Repeat password</string>
+    <string name="textView_nombre_string">Name</string>
+    <string name="textView_apellido_string">Surname</string>
+    <string name="Usuario_creado_string">User created</string>
+    <string name="Usuario_o_contraseña_inválidos_string">Invalid user or password</string>
+    <string name="Algunos_campos_están_vacíos_string">Some fields are empty</string>
+    <string name="No_se_han_podido_guardar_los_cambios_string">Couldn\'t save changes</string>
+    <string name="Los_cambios_han_sido_guardados_string">Changes saved</string>
+    <string name="Nombre_de_usuario_ya_está_en_uso_string">Username is already in use</string>
+    <string name="Las_contraseñas_introducidas_no_coinciden_string">Passwords do not match</string>
+
+</resources>
