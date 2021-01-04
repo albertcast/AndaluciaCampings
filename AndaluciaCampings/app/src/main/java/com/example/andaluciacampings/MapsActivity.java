@@ -32,7 +32,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationManager locationManager;
 
     private final long MIN_TIME = 1000;
-    private final long MIN_DIST = 5;
+    private final long MIN_DIST = 50;
 
     private LatLng latLng;
     private Marker marker;
@@ -41,7 +41,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             , campingLaAldea, CampingTarifa, CampingLuz;
     private LatLng[] campings;
     private String username;
-    private Boolean experienciaObtenida;
 
     private BottomNavigationView bottomNav;
 
@@ -59,10 +58,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         bottomNav = (BottomNavigationView) findViewById(R.id.bottomNavigation);
         bottomNav.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
         myDb = new DatabaseHelper(this);
-        experienciaObtenida = false;
         username = getIntent().getStringExtra("usuario");
         ActivityCompat.requestPermissions(this, new String [] {Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         ActivityCompat.requestPermissions(this, new String [] {Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
+
+
+
 
     }
 
@@ -159,15 +160,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         marker.remove();
                     }
                     marker = mMap.addMarker(new MarkerOptions().position(latLng).title("You are here"));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    float zoomLevel = 7.0f; //This goes up to 21
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
 
                     for(LatLng point : campings) {
                         target.setLatitude(point.latitude);
                         target.setLongitude(point.longitude);
-                        if(location.distanceTo(target) < 100 && !experienciaObtenida) {
-                            experienciaObtenida = myDb.updateExperiencia(username, 10);
-                            Toast.makeText(MapsActivity.this,R.string.Alcanzado_nuevo_camping_string,Toast.LENGTH_LONG).show();
-                            System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+                        if(location.distanceTo(target) < 100) {
+                            if(myDb.updateExperiencia(username, 10)) {
+                                Toast.makeText(MapsActivity.this, R.string.Alcanzado_nuevo_camping_string, Toast.LENGTH_LONG).show();
+                                System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+                            }
                         }
                     }
 

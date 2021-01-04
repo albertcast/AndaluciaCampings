@@ -178,18 +178,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     } else {
                         experiencia += exp;
                     }
+
+
                     contentValues.put(COL_1, id);
                     contentValues.put(COL_6, nivel);
                     contentValues.put(COL_7, experiencia);
                     contentValues.put(COL_8, millis);
                     db.update(TABLE_NAME, contentValues, "ID = ?", new String[] { id });
+                    return true;
                 }
 
             } catch (ParseException e){
                 e.printStackTrace();
             }
         }
-        return true;
+        return false;
     }
 
 
