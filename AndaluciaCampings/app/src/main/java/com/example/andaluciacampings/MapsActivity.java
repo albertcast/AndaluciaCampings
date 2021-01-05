@@ -152,22 +152,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onLocationChanged(@NonNull Location location) {
                 try {
                     Location target = new Location("target");
+                    if (target.getProvider() != null) {
+                        latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                        if (marker != null) {
+                            marker.remove();
+                        }
+                        marker = mMap.addMarker(new MarkerOptions().position(latLng).title("You are here"));
+                        float zoomLevel = 7.0f; //This goes up to 21
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
 
-                    latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    if(marker != null){
-                        marker.remove();
-                    }
-                    marker = mMap.addMarker(new MarkerOptions().position(latLng).title("You are here"));
-                    float zoomLevel = 7.0f; //This goes up to 21
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
-
-                    for(LatLng point : campings) {
-                        target.setLatitude(point.latitude);
-                        target.setLongitude(point.longitude);
-                        if(location.distanceTo(target) < 100) {
-                            if(myDb.updateExperiencia(UsuarioAplicacion.get().getNombre(), 10)) {
-                                Toast.makeText(MapsActivity.this, R.string.Alcanzado_nuevo_camping_string, Toast.LENGTH_LONG).show();
-                                System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+                        for (LatLng point : campings) {
+                            target.setLatitude(point.latitude);
+                            target.setLongitude(point.longitude);
+                            if (location.distanceTo(target) < 100) {
+                                if (myDb.updateExperiencia(UsuarioAplicacion.get().getNombre(), 10)) {
+                                    Toast.makeText(MapsActivity.this, R.string.Alcanzado_nuevo_camping_string, Toast.LENGTH_LONG).show();
+                                    System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+                                }
                             }
                         }
                     }
