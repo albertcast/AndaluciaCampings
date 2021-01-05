@@ -2,7 +2,6 @@ package com.example.andaluciacampings;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
@@ -11,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -46,8 +44,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private BottomNavigationView bottomNav;
 
     private DatabaseHelper myDb;
-
-    private final static boolean forceNetwork = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,39 +150,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-                if ( ContextCompat.checkSelfPermission( MapsActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
-                        ContextCompat.checkSelfPermission( MapsActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    return  ;
-                }
-
                 try {
-
                     Location target = new Location("target");
+                    if (target.getProvider() != null) {
+                        latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                        if (marker != null) {
+                            marker.remove();
+                        }
+                        marker = mMap.addMarker(new MarkerOptions().position(latLng).title("You are here"));
+                        float zoomLevel = 7.0f; //This goes up to 21
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
 
-                    latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    if (marker != null) {
-                        marker.remove();
-                    }
-                    marker = mMap.addMarker(new MarkerOptions().position(latLng).title("You are here"));
-                    float zoomLevel = 7.0f; //This goes up to 21
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
-
-                    for (LatLng point : campings) {
-                        target.setLatitude(point.latitude);
-                        target.setLongitude(point.longitude);
-                        if (location.distanceTo(target) < 100) {
-                            if (myDb.updateExperiencia(UsuarioAplicacion.get().getNombre(), 10)) {
-                                Toast.makeText(MapsActivity.this, R.string.Alcanzado_nuevo_camping_string, Toast.LENGTH_LONG).show();
-                                System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+                        for (LatLng point : campings) {
+                            target.setLatitude(point.latitude);
+                            target.setLongitude(point.longitude);
+                            if (location.distanceTo(target) < 100) {
+                                if (myDb.updateExperiencia(UsuarioAplicacion.get().getNombre(), 10)) {
+                                    Toast.makeText(MapsActivity.this, R.string.Alcanzado_nuevo_camping_string, Toast.LENGTH_LONG).show();
+                                    System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+                                }
                             }
                         }
                     }
+
                 } catch(SecurityException e){
                     e.printStackTrace();
                 }
             }
         };
-        //?
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         try {
