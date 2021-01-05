@@ -6,7 +6,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -14,7 +13,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -37,9 +35,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private final long MIN_TIME = 1000;
     private final long MIN_DIST = 50;
-    int PERMISSION_ID = 44;
-
-
 
     private LatLng latLng;
     private Marker marker;
@@ -59,7 +54,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         bottomNav = (BottomNavigationView) findViewById(R.id.bottomNavigation);
@@ -158,40 +154,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-                if(checkPermissions()){
-                    if(isLocationEnabled()) {
-                        try {
+                if ( ContextCompat.checkSelfPermission( MapsActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
+                        ContextCompat.checkSelfPermission( MapsActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return  ;
+                }
 
-                            Location target = new Location("target");
+                try {
 
-                            latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                            if (marker != null) {
-                                marker.remove();
-                            }
-                            marker = mMap.addMarker(new MarkerOptions().position(latLng).title("You are here"));
-                            float zoomLevel = 7.0f; //This goes up to 21
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
+                    Location target = new Location("target");
 
-                            for (LatLng point : campings) {
-                                target.setLatitude(point.latitude);
-                                target.setLongitude(point.longitude);
-                                if (location.distanceTo(target) < 100) {
-                                    if (myDb.updateExperiencia(UsuarioAplicacion.get().getNombre(), 10)) {
-                                        Toast.makeText(MapsActivity.this, R.string.Alcanzado_nuevo_camping_string, Toast.LENGTH_LONG).show();
-                                        System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
-                                    }
-                                }
-                            }
-                        } catch (SecurityException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        Toast.makeText(MapsActivity.this,"Please turn on your location...",Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivity(intent);
+                    latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    if (marker != null) {
+                        marker.remove();
                     }
-                } else {
-                    requestPermissions();
+                    marker = mMap.addMarker(new MarkerOptions().position(latLng).title("You are here"));
+                    float zoomLevel = 7.0f; //This goes up to 21
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
+
+                    for (LatLng point : campings) {
+                        target.setLatitude(point.latitude);
+                        target.setLongitude(point.longitude);
+                        if (location.distanceTo(target) < 100) {
+                            if (myDb.updateExperiencia(UsuarioAplicacion.get().getNombre(), 10)) {
+                                Toast.makeText(MapsActivity.this, R.string.Alcanzado_nuevo_camping_string, Toast.LENGTH_LONG).show();
+                                System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+                            }
+                        }
+                    }
+                } catch(SecurityException e){
+                    e.printStackTrace();
                 }
             }
         };
@@ -204,21 +195,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             e.printStackTrace();
         }
     }
-
-    private boolean isLocationEnabled(){
-        LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-    }
-
-    private boolean checkPermissions() {
-        return ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-    }
-
-        private void requestPermissions() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ID);
-    }
-
     public void Home(){
         Intent intento = new Intent(MapsActivity.this, InicioAplicacion.class);
         startActivity(intento);
