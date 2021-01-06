@@ -35,6 +35,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Campin
 
         Camping camping = campingList.get(position);
         holder.campingName.setText(camping.getCampingName());
+        holder.campingLocation.setText(camping.getLocation());
+        holder.campingPhone.setText(camping.getPhone_number());
         holder.campingImage.setImageResource(camping.getCampingImage());
     }
 
@@ -46,10 +48,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Campin
     public static class CampingViewHolder extends RecyclerView.ViewHolder
     {
         public TextView campingName;
+        public TextView campingLocation;
+        public TextView campingPhone;
         public CircleImageView campingImage;
         public CampingViewHolder(@NonNull View itemView) {
             super(itemView);
             campingName = itemView.findViewById(R.id.profile_name);
+            campingLocation = itemView.findViewById(R.id.location);
+            campingPhone = itemView.findViewById(R.id.phone_number);
             campingImage = itemView.findViewById(R.id.profile_image);
         }
     }
