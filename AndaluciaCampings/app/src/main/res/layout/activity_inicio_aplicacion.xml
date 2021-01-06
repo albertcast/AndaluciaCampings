@@ -40,4 +40,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/compass1" />
+    +
+    <ImageView
+        android:id="@+id/AnadaluciaCampingsImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/andaluciacampings" />
 </androidx.constraintlayout.widget.ConstraintLayout>
