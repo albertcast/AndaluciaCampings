@@ -1,19 +1,29 @@
 package com.example.andaluciacampings;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
+import android.provider.Settings;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -22,62 +32,189 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    // initializing
+    // FusedLocationProviderClient
+    String lat, lon;
+    Marker markerActual;
+    LatLng currentPosition;
+    FusedLocationProviderClient mFusedLocationClient;
+    int PERMISSION_ID = 44;
 
-    private LocationListener locationListener;
-    private LocationManager locationManager;
-
-    private final long MIN_TIME = 1000;
-    private final long MIN_DIST = 50;
-
-    private LatLng latLng;
-    private Marker marker;
-    private LatLng currentPosition, campingCabopino, campingLosEscullos, campingGiralda, campingCañosDelMeca, campingLaRosaleda, campingAlmayateCosta
+    private LatLng campingCabopino, campingLosEscullos, campingGiralda, campingCañosDelMeca, campingLaRosaleda, campingAlmayateCosta
             , campingPinarSanJosé, campingLasLomas, campingPlayaAguadulce, CampingAlmanat, campingValdevaqueros, campingMarAzulBalerma
             , campingLaAldea, CampingTarifa, CampingLuz;
     private LatLng[] campings;
 
-    private BottomNavigationView bottomNav;
-
+    private LocationListener locationListener;
+    private LocationManager locationManager;
+    private final long MIN_TIME = 1000;
+    private final long MIN_DIST = 50;
+    private LatLng latLng;
+    private Marker marker;
     private DatabaseHelper myDb;
+    private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // method to get the location
+        getLastLocation();
 
         bottomNav = (BottomNavigationView) findViewById(R.id.bottomNavigation);
         bottomNav.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
         myDb = new DatabaseHelper(this);
         ActivityCompat.requestPermissions(this, new String [] {Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         ActivityCompat.requestPermissions(this, new String [] {Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
-
         bottomNav.getMenu().getItem(0).setChecked(false);
         bottomNav.getMenu().getItem(1).setChecked(true);
-
-
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
+    @SuppressLint("MissingPermission")
+    private void getLastLocation()
+    {
+        // check if permissions are given
+        if (checkPermissions()) {
+            // check if location is enabled
+            if (isLocationEnabled()) {
+
+                // getting last
+                // location from
+                // FusedLocationClient
+                // object
+                mFusedLocationClient.getLastLocation().addOnCompleteListener(
+                        new OnCompleteListener<Location>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Location> task) {
+                                Location location = task.getResult();
+                                if (location == null) {
+                                    requestNewLocationData();
+                                } else {
+                                    lat = location.getLatitude()+ "";
+                                    lon = location.getLongitude()+ "";
+                                    LatLng currentPosition = new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
+
+                                    markerActual = mMap.addMarker(new MarkerOptions().position(currentPosition).title("You are here"));
+                                    float zoomLevel = 7.0f; //This goes up to 21
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, zoomLevel));
+                                }
+                            }
+                        });
+            } else {
+                //Toast.makeText(this,"Please turn on"+ " your location...", Toast.LENGTH_LONG).show();
+                //Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                //startActivity(intent);
+            }
+        } else {
+            // if permissions aren't available,
+            // request for permissions
+            requestPermissions();
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void requestNewLocationData()
+    {
+
+        // Initializing LocationRequest
+        // object with appropriate methods
+        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(5);
+        mLocationRequest.setFastestInterval(0);
+        mLocationRequest.setNumUpdates(1);
+
+        // setting LocationRequest
+        // on FusedLocationClient
+        mFusedLocationClient= LocationServices.getFusedLocationProviderClient(this);
+
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest,mLocationCallback,Looper.myLooper());
+    }
+
+    private LocationCallback mLocationCallback= new LocationCallback() {
+
+        @Override
+        public void onLocationResult(LocationResult locationResult){
+            Location mLastLocation= locationResult.getLastLocation();
+            lat = mLastLocation.getLatitude()+ "";
+            lon = mLastLocation.getLongitude()+ "";
+            currentPosition = new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
+            markerActual = mMap.addMarker(new MarkerOptions().position(currentPosition).title("You are here"));
+            float zoomLevel = 7.0f; //This goes up to 21
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, zoomLevel));
+        }
+    };
+
+    // method to check for permissions
+    private boolean checkPermissions()
+    {
+        return ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED;
+    }
+
+    // method to requestfor permissions
+    private void requestPermissions()
+    {
+        ActivityCompat.requestPermissions(this,
+                new String[] {Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION },PERMISSION_ID);
+    }
+
+    // method to check
+    // if location is enabled
+    private boolean isLocationEnabled()
+    {
+        LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)|| locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    // If everything is alright then
+    @Override
+    public void
+    onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,@NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode,permissions,grantResults);
+
+        if (requestCode == PERMISSION_ID) {
+            if (grantResults.length > 0 && grantResults[0]== PackageManager.PERMISSION_GRANTED) {
+                getLastLocation();
+            }
+        }
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        if (checkPermissions()) {
+            getLastLocation();
+        }
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setMapType(mMap.MAP_TYPE_SATELLITE);
+
+        googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Intent intent = new Intent(MapsActivity.this, ListaCampings.class);
+                startActivity(intent);
+            }
+        });
 
         campingCabopino = new LatLng(36.490062617714415, -4.743357006152879);
         mMap.addMarker(new MarkerOptions().position(campingCabopino).title("Camping Cabopino")
@@ -147,44 +284,57 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 , campingPinarSanJosé, campingLasLomas, campingPlayaAguadulce, CampingAlmanat, campingValdevaqueros, campingMarAzulBalerma
                 , campingLaAldea, CampingTarifa, CampingLuz};
 
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(@NonNull Location location) {
-                try {
-                    Location target = new Location("target");
+        if(checkPermissions()) {
+            if (isLocationEnabled()) {
+            locationListener = new LocationListener() {
+                @Override
+                public void onLocationChanged(@NonNull Location location) {
+                        try {
+                            Location target = new Location("target");
 
-                    latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    if(marker != null){
-                        marker.remove();
-                    }
-                    marker = mMap.addMarker(new MarkerOptions().position(latLng).title("You are here"));
-                    float zoomLevel = 7.0f; //This goes up to 21
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
-
-                    for(LatLng point : campings) {
-                        target.setLatitude(point.latitude);
-                        target.setLongitude(point.longitude);
-                        if(location.distanceTo(target) < 100) {
-                            if(myDb.updateExperiencia(UsuarioAplicacion.get().getNombre(), 10)) {
-                                Toast.makeText(MapsActivity.this, R.string.Alcanzado_nuevo_camping_string, Toast.LENGTH_LONG).show();
-                                System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+                            latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                            if (marker != null) {
+                                marker.remove();
                             }
+                            marker = mMap.addMarker(new MarkerOptions().position(latLng).title("You are here"));
+                            float zoomLevel = 7.0f; //This goes up to 21
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
+
+                            for (LatLng point : campings) {
+                                target.setLatitude(point.latitude);
+                                target.setLongitude(point.longitude);
+                                if (location.distanceTo(target) < 100) {
+                                    if (myDb.updateExperiencia(UsuarioAplicacion.get().getNombre(), 10)) {
+                                        Toast.makeText(MapsActivity.this, R.string.Alcanzado_nuevo_camping_string, Toast.LENGTH_LONG).show();
+                                        System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+                                    }
+                                }
+                            }
+
+                        } catch (SecurityException e) {
+                            e.printStackTrace();
                         }
-                    }
 
-                } catch(SecurityException e){
-                    e.printStackTrace();
                 }
-            }
-        };
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        try {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DIST, locationListener);
-        } catch (SecurityException e){
-            e.printStackTrace();
+            };
+            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+            try {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DIST, locationListener);
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            }
+            } else {
+                Toast.makeText(MapsActivity.this, "Please turn on your location...", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        } else {
+            requestPermissions();
         }
     }
+
     public void Home(){
         Intent intento = new Intent(MapsActivity.this, InicioAplicacion.class);
         startActivity(intento);

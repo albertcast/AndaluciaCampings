@@ -4,6 +4,7 @@ package com.example.andaluciacampings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -58,5 +59,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Campin
             campingPhone = itemView.findViewById(R.id.phone_number);
             campingImage = itemView.findViewById(R.id.profile_image);
         }
+    }
+    public void aMaps(){
+
     }
 }
